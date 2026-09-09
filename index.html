@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Juan sin visa - V18 Remastered</title> 
+    <title>Juan sin visa - V28 Remastered</title> 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap');
 
@@ -1370,7 +1370,7 @@ function draw() {
         let totalTextHeight = storyText.length * lineHeight;
         let startY = ch/2 - totalTextHeight/2;
         
-        ctx.fillText('LA TRAVESÍA DE JUAN.', cw/2, startY - 40);
+        ctx.fillText('.LA TRAVESÍA DE JUAN.', cw/2, startY - 40);
         
         ctx.font = `600 ${Math.min(18, cw * 0.045)}px Nunito`;
         ctx.fillStyle = '#bdc3c7';
@@ -1412,7 +1412,7 @@ function draw() {
         ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = `900 ${titleSize}px Nunito`; ctx.shadowColor = 'rgba(255,255,255,0.3)'; ctx.shadowBlur = 15;
         ctx.fillText('JUAN SIN VISA', cw/2, ch/2 - cardH/2 - 30);
         ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + Math.abs(Math.sin(globalTime * 3))*0.6})`; ctx.font = `900 ${Math.min(22, cw * 0.05)}px Nunito`; ctx.shadowBlur = 0;
-        ctx.fillText('TOCA LA PANTALLA PARA INICIAR', cw/2, ch/2 + cardH/2 + 70); ctx.textAlign = 'left';
+        ctx.fillText('TOCA LA PANTALLA PARA INICIAR', cw/2, ch/2 + cardH/2 + 50); ctx.textAlign = 'left';
     } 
     else if (state === 'PLAYING' || state === 'TRANSITION') {
         drawBackground(ctx, b); drawEnvironments(ctx, b);
@@ -1460,9 +1460,68 @@ function draw() {
         ctx.textAlign = 'left';
     }
     else if (state === 'WIN') {
-        ctx.fillStyle = 'rgba(43, 43, 43, 0.95)'; ctx.fillRect(0, 0, cw, ch); let winTime = globalTime * 300;
-        ctx.save(); let juanX = (winTime % (cw + 400)) - 200; ctx.translate(juanX, ch/2 + 60); ctx.font = '70px Arial'; ctx.fillText('🏃🏽‍♂️', 0, 0); ctx.font = '40px Arial'; ctx.fillText('💳', 40, -20); ctx.restore();
-        ctx.save(); let copX = cw - (winTime * 1.1 % (cw + 400)); ctx.translate(copX, ch/2 + 60); ctx.scale(-1, 1); ctx.font = '70px Arial'; ctx.fillText('🚓', 0, 0); ctx.fillText('👮🏻‍♂️', 80, 0); ctx.fillText('👮🏻‍♂️', 140, 0); ctx.restore();
+        ctx.fillStyle = 'rgba(43, 43, 43, 0.95)'; ctx.fillRect(0, 0, cw, ch);
+
+        // Escena final: Juan persigue a la policía.
+        // Se usan los personajes reales del juego, corriendo en un bucle sin salir de pantalla.
+        let chaseBob = Math.sin(globalTime * 14) * 3;
+        let oldCam = cameraX;
+        cameraX = 0;
+
+        // Escala y posiciones adaptadas para móviles:
+        // todos los personajes quedan completos dentro del lienzo.
+        const mobileScale = cw < 600 ? 0.72 : 1;
+        const baseY = ch/2 + 105 + chaseBob;
+
+        // Juan persigue mirando hacia la derecha.
+        let finalJuan = new Player();
+        finalJuan.w *= mobileScale;
+        finalJuan.h *= mobileScale;
+        finalJuan.x = cw * 0.12;
+        finalJuan.y = baseY - finalJuan.h;
+        finalJuan.vx = 180;
+        finalJuan.facing = 1;
+        finalJuan.weapon = null;
+
+        ctx.save();
+        ctx.translate(finalJuan.x, finalJuan.y);
+        ctx.scale(mobileScale, mobileScale);
+        finalJuan.x = 0;
+        finalJuan.y = 0;
+        finalJuan.draw(ctx);
+        ctx.restore();
+
+        // Policías huyendo, ligeramente juntos para que se entienda la persecución.
+        let finalCop1 = new Enemy(cw * 0.43, baseY, 'ice_melee');
+        finalCop1.vx = -120;
+        finalCop1.draw(ctx);
+
+        let finalCop2 = new Enemy(cw * 0.54, baseY, 'police_melee');
+        finalCop2.vx = -120;
+        finalCop2.draw(ctx);
+
+        // Auto ICE completamente visible incluso en pantallas pequeñas.
+        let finalCar = new Enemy(cw * 0.68, baseY, 'car');
+        if (cw < 600) {
+            finalCar.w = 110;
+            finalCar.h = 44;
+            finalCar.x = cw * 0.63;
+        }
+        finalCar.vx = -180;
+        finalCar.draw(ctx);
+
+        // Líneas de velocidad, no emojis, para mantener el estilo del juego.
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.lineWidth = 3;
+        for(let i=0;i<3;i++){
+            ctx.beginPath();
+            ctx.moveTo(cw * 0.28 - i*14, baseY - 30 - i*12);
+            ctx.lineTo(cw * 0.34 - i*14, baseY - 30 - i*12);
+            ctx.stroke();
+        }
+
+        cameraX = oldCam;
+
         ctx.textAlign = 'center'; ctx.fillStyle = CONFIG.colors.switchBlue;
         // Título responsive: en móviles se calcula el tamaño real para que nunca se corte.
         const winTitle = '¡SUEÑO AMERICANO LOGRADO!';
@@ -1476,7 +1535,7 @@ function draw() {
         ctx.font = `900 ${winTitleSize}px Nunito`;
         ctx.fillText(winTitle, cw/2, ch/2 - 60);
         ctx.fillStyle = '#fff'; ctx.font = `900 ${Math.min(22, cw * 0.04)}px Nunito`; ctx.fillText('¡Felicidades, eres libre!', cw/2, ch/2 + 10);
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + Math.abs(Math.sin(globalTime * 3))*0.6})`; ctx.font = `700 ${Math.min(20, cw*0.04)}px Nunito`; ctx.fillText('Toca la pantalla para volver al menú', cw/2, ch/2 + 160); ctx.textAlign = 'left';
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + Math.abs(Math.sin(globalTime * 3))*0.6})`; ctx.font = `700 ${Math.min(15, cw*0.04)}px Nunito`; ctx.fillText('Toca la pantalla para volver al inicio', cw/2, ch/2 + 160); ctx.textAlign = 'left';
     }
 }
 
