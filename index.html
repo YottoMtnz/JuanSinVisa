@@ -629,6 +629,9 @@ class Enemy {
         // aceleraciones imposibles y mantener una persecución jugable.
         this.vx = type === 'car' ? -175 : (type === 'hipcar' ? -205 : -100); this.vy = 0;
         this.hp = (type === 'hipcar') ? 4 : 2;
+        // Golpes por salto: los coches necesitan 3 pisotones para romperse.
+        // Esta mecánica es independiente de armas y proyectiles.
+        this.stompHits = 0;
         this.timer = 0; this.dead = false;
     }
     update(dt) {
@@ -1005,10 +1008,26 @@ function update(dt) {
         for (let e of enemies) {
             if (e.dead) continue;
             if (AABB(player, e)) {
-                if ((e.type === 'car' || e.type === 'hipcar') && Math.abs(player.vx) < 15 && player.onGround) { die('deport_instant', true); }
-                else if (player.vy > 0 && player.y + player.h - player.vy*dt <= e.y + 25 && (e.type === 'car' || e.type === 'hipcar')) {
-                    e.hp--; player.vy = CONFIG.physics.jumpForce * 0.85; playSFX('hit'); spawnParticles(player.x, player.y + player.h, 20, '#f1c40f');
-                    if(e.hp <= 0) { e.dead = true; spawnParticles(e.x+e.w/2, e.y+e.h/2, 35, '#34495e'); }
+                const stomp = player.vy > 0 && player.y + player.h - player.vy*dt <= e.y + 25;
+
+                // Caer encima de un enemigo SIEMPRE lo elimina.
+                // Excepción: coches, que requieren 3 saltos encima.
+                if (stomp) {
+                    player.vy = CONFIG.physics.jumpForce * 0.85;
+                    playSFX('hit');
+                    spawnParticles(player.x, player.y + player.h, 20, '#f1c40f');
+
+                    if (e.type === 'car' || e.type === 'hipcar') {
+                        e.stompHits++;
+                        spawnParticles(e.x + e.w/2, e.y + 10, 10, '#95a5a6');
+                        if (e.stompHits >= 3) {
+                            e.dead = true;
+                            spawnParticles(e.x+e.w/2, e.y+e.h/2, 35, '#34495e');
+                        }
+                    } else {
+                        e.dead = true;
+                        spawnParticles(e.x+e.w/2, e.y+e.h/2, 30, CONFIG.colors.switchRed);
+                    }
                 } else if (player.invuln <= 0) {
                     player.hp -= 25; player.invuln = 1.5; playSFX('hit'); spawnParticles(player.x+player.w/2, player.y+player.h/2, 20, CONFIG.colors.switchRed); 
                     player.vx = (player.x < e.x) ? -600 : 600; player.vy = -350; 
