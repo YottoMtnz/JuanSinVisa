@@ -1010,14 +1010,14 @@ function draw() {
         ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = `900 ${titleSize}px Nunito`; ctx.shadowColor = 'rgba(255,255,255,0.3)'; ctx.shadowBlur = 15;
         ctx.fillText('JUAN SIN VISA', cw/2, ch/2 - cardH/2 - 30);
         ctx.fillStyle = `rgba(255, 255, 255, ${0.4 + Math.abs(Math.sin(globalTime * 3))*0.6})`; ctx.font = `900 ${Math.min(22, cw * 0.05)}px Nunito`; ctx.shadowBlur = 0;
-        ctx.fillText('TOCA LA PANTALLA O ESPACIO PARA INICIAR', cw/2, ch/2 + cardH/2 + 70); ctx.textAlign = 'left';
+        ctx.fillText('TOCA LA PANTALLA PARA INICIAR', cw/2, ch/2 + cardH/2 + 70); ctx.textAlign = 'left';
     } 
     else if (state === 'PLAYING' || state === 'TRANSITION') {
         drawBackground(ctx, b); drawEnvironments(ctx, b);
         boxes.forEach(bx => bx.draw(ctx)); enemies.forEach(e => e.draw(ctx)); projectiles.forEach(p => p.draw(ctx));
         particles.forEach(p => p.draw(ctx)); player.draw(ctx); drawWeather(ctx);
         
-        if (state === 'TRANSITION') { ctx.fillStyle = 'rgba(43, 43, 43, 0.9)'; ctx.fillRect(0, 0, cw, ch); ctx.fillStyle = CONFIG.colors.switchBlue; ctx.font = `900 ${Math.min(45, cw*0.07)}px Nunito`; ctx.textAlign = 'center'; ctx.fillText('¡NIVEL SUPERADO!', cw/2, ch/2); ctx.textAlign = 'left'; }
+        if (state === 'TRANSITION') { ctx.fillStyle = 'rgba(43, 43, 43, 0.9)'; ctx.fillRect(0, 0, cw, ch); ctx.fillStyle = CONFIG.colors.switchBlue; ctx.font = `900 ${Math.min(45, cw*0.07)}px Nunito`; ctx.textAlign = 'center'; ctx.fillText('¡Frontera Cruzada!', cw/2, ch/2); ctx.textAlign = 'left'; }
     } 
     else if (state === 'GAMEOVER') {
         ctx.fillStyle = 'rgba(20, 20, 20, 0.96)'; ctx.fillRect(0, 0, cw, ch); ctx.fillStyle = CONFIG.colors.switchRed; ctx.font = `900 ${Math.min(50, cw*0.075)}px Nunito`; ctx.textAlign = 'center'; ctx.fillText('¡GAME OVER!', cw/2, ch/2 - 30);
