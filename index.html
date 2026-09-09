@@ -325,9 +325,47 @@ function playSFX(type) {
             gain.gain.setValueAtTime(0.04 * VOLUMEN_EFECTOS, now); gain.gain.exponentialRampToValueAtTime(0.01 * VOLUMEN_EFECTOS, now + 0.3); 
             osc.start(now); osc.stop(now + 0.3); break;
         case 'thunder': 
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.exponentialRampToValueAtTime(10, now + 1.2); 
-            gain.gain.setValueAtTime(0.15 * VOLUMEN_EFECTOS, now); gain.gain.exponentialRampToValueAtTime(0.01 * VOLUMEN_EFECTOS, now + 1.2); 
-            osc.start(now); osc.stop(now + 1.2); break;
+            // Trueno realista: golpe seco + retumbo profundo + ruido de tormenta
+            const thunderOsc = audioCtx.createOscillator();
+            const thunderGain = audioCtx.createGain();
+            const thunderNoise = audioCtx.createBufferSource();
+            const thunderFilter = audioCtx.createBiquadFilter();
+            const thunderNoiseGain = audioCtx.createGain();
+
+            thunderOsc.type = 'sine';
+            thunderOsc.frequency.setValueAtTime(120, now);
+            thunderOsc.frequency.exponentialRampToValueAtTime(25, now + 2.4);
+
+            thunderGain.gain.setValueAtTime(0.001, now);
+            thunderGain.gain.exponentialRampToValueAtTime(0.32 * VOLUMEN_EFECTOS, now + 0.04);
+            thunderGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+
+            thunderFilter.type = 'lowpass';
+            thunderFilter.frequency.setValueAtTime(1000, now);
+            thunderFilter.frequency.exponentialRampToValueAtTime(90, now + 2.8);
+
+            const thunderBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 3, audioCtx.sampleRate);
+            const thunderData = thunderBuffer.getChannelData(0);
+            for (let i = 0; i < thunderData.length; i++) {
+                const fade = 1 - (i / thunderData.length);
+                thunderData[i] = (Math.random() * 2 - 1) * fade * fade;
+            }
+
+            thunderNoise.buffer = thunderBuffer;
+            thunderNoise.connect(thunderFilter);
+            thunderFilter.connect(thunderNoiseGain);
+            thunderNoiseGain.connect(audioCtx.destination);
+
+            thunderNoiseGain.gain.setValueAtTime(0.18 * VOLUMEN_EFECTOS, now);
+            thunderNoiseGain.gain.exponentialRampToValueAtTime(0.001, now + 3);
+
+            thunderOsc.connect(thunderGain);
+            thunderGain.connect(audioCtx.destination);
+
+            thunderOsc.start(now);
+            thunderOsc.stop(now + 3);
+            thunderNoise.start(now);
+            break;
     }
 }
 
@@ -497,7 +535,8 @@ class Player {
         let hitWall = false;
         
         for (let p of platforms.filter(p => p.type === 'ground')) {
-            if (AABB(boxX, p)) {
+            const solid = wallCollisionBox(p);
+            if (AABB(boxX, solid)) {
                 if (this.vx > 0) this.x = p.x - this.w;
                 else if (this.vx < 0) this.x = p.x + p.w;
                 this.vx = 0; hitWall = true; break;
@@ -574,12 +613,86 @@ class Player {
         ctx.fillStyle='#1f5aa6';ctx.fillRect(drawX+12,this.y+28-breathe,10,2);ctx.fillRect(drawX+12,this.y+32-breathe,10,2);
         ctx.fillStyle='#ed1c24';ctx.beginPath();ctx.moveTo(drawX+12,this.y+28-breathe);ctx.lineTo(drawX+17,this.y+31-breathe);ctx.lineTo(drawX+12,this.y+34-breathe);ctx.closePath();ctx.fill();
         ctx.fillStyle = '#8e44ad'; ctx.beginPath(); ctx.roundRect(drawX - 8, this.y + 20 - breathe, 10, 18, 4); ctx.fill();
-        // Banderita cubana en la mochila, ondeando con el movimiento.
-        const flagSway=Math.sin(globalTime*5)*3;
-        ctx.strokeStyle='#ead7a2';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(drawX-5,this.y+20-breathe);ctx.lineTo(drawX-5,this.y-2-breathe);ctx.stroke();
-        ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(drawX-5,this.y-2-breathe);ctx.lineTo(drawX+12+flagSway,this.y+2-breathe);ctx.lineTo(drawX-5,this.y+7-breathe);ctx.closePath();ctx.fill();
-        ctx.fillStyle='#1f5aa6';ctx.fillRect(drawX-4,this.y-1-breathe,15,3);ctx.fillRect(drawX-4,this.y+5-breathe,15,3);
-        ctx.fillStyle='#ed1c24';ctx.beginPath();ctx.moveTo(drawX-5,this.y-2-breathe);ctx.lineTo(drawX+3+flagSway,this.y+2.5-breathe);ctx.lineTo(drawX-5,this.y+7-breathe);ctx.closePath();ctx.fill();
+        // Banderita cubana MUY pequeña en la mochila, ondeando hacia atrás.
+        // Está espejada horizontalmente: el asta queda a la derecha y el
+        // triángulo rojo queda junto al asta, tal como la referencia.
+        const flagWave = Math.sin(globalTime * 7.5) * 0.9;
+        const fx = drawX + 4;          // asta, a la derecha de la banderita
+        const fy = this.y + 18 - breathe;
+        const fw = 29;                 // pequeña: menos de la mitad de Juan
+        const fh = 16;
+
+        // Asta corta
+        ctx.strokeStyle = '#ead7a2';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(fx, fy + 2);
+        ctx.lineTo(fx, fy - fh - 4);
+        ctx.stroke();
+        ctx.fillStyle = '#ead7a2';
+        ctx.beginPath();
+        ctx.arc(fx, fy - fh - 4, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Paño: va desde el asta hacia la izquierda y ondula.
+        ctx.save();
+        ctx.beginPath();
+        for (let i = 0; i <= 12; i++) {
+            const q = i / 12;
+            const xx = fx - q * fw;
+            const wave = Math.sin(globalTime * 8 + q * 5.5) * 0.75;
+            const yy = fy - fh + wave + flagWave * q;
+            if (i === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+        }
+        for (let i = 12; i >= 0; i--) {
+            const q = i / 12;
+            const xx = fx - q * fw;
+            const wave = Math.sin(globalTime * 8 + q * 5.5 + 0.55) * 0.75;
+            const yy = fy + wave + flagWave * q;
+            ctx.lineTo(xx, yy);
+        }
+        ctx.closePath();
+        ctx.clip();
+
+        const left = fx - fw;
+        const top = fy - fh;
+        const mid = fy - fh / 2;
+
+        // Fondo blanco + franjas azules.
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(left - 1, top - 1, fw + 2, fh + 2);
+        ctx.fillStyle = '#1f5aa6';
+        for (let i = 0; i < 5; i += 2) {
+            ctx.fillRect(left - 1, top - 1 + i * fh / 5, fw + 2, fh / 5);
+        }
+
+        // Triángulo rojo junto al asta (bandera horizontalmente invertida).
+        ctx.fillStyle = '#ed1c24';
+        ctx.beginPath();
+        ctx.moveTo(fx + 1, top - 1);
+        ctx.lineTo(fx - fw * 0.47, mid);
+        ctx.lineTo(fx + 1, fy + 1);
+        ctx.closePath();
+        ctx.fill();
+
+        // Estrella blanca, pequeña pero reconocible.
+        const sx = fx - fw * 0.17;
+        const sy = mid;
+        const outer = 2.7;
+        const inner = 1.15;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+            const a = -Math.PI / 2 + i * Math.PI / 5;
+            const r = (i % 2 === 0) ? outer : inner;
+            const px = sx + Math.cos(a) * r;
+            const py = sy + Math.sin(a) * r;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
 
         let headY = this.y + 8 - breathe + Math.abs(walkCycle)*4;
         ctx.fillStyle = '#f2c28b'; ctx.beginPath(); ctx.arc(drawX + this.w/2 + 2, headY, 13, 0, Math.PI*2); ctx.fill();
@@ -653,13 +766,32 @@ class Enemy {
         let nextX = this.x + this.vx * dt;
         let eBoxX = {x: nextX, y: this.y + 10, w: this.w, h: this.h - 20};
         let hitWall = false;
+        let hitWallPlatform = null;
         for(let p of platforms.filter(p=>p.type==='ground')) {
-            if(AABB(eBoxX, p)) {
+            const solid = wallCollisionBox(p);
+            if(AABB(eBoxX, solid)) {
                 if (this.vx > 0) this.x = p.x - this.w; else this.x = p.x + p.w;
-                this.vx *= -1; hitWall = true; break;
+                hitWall = true;
+                hitWallPlatform = p;
+                break;
             }
         }
         if (!hitWall) this.x = nextX;
+
+        // La policía humana puede saltar los muros igual que Juan.
+        // Los coches, en cambio, no saltan: llegan al muro y se dan la vuelta.
+        if (hitWall && hitWallPlatform && isWallPlatform(hitWallPlatform)) {
+            if (this.type === 'car' || this.type === 'hipcar') {
+                this.vx *= -1;
+                this.x += this.vx * dt * 2;
+            } else {
+                const nearTop = (this.y + this.h) >= hitWallPlatform.y - 32;
+                if (nearTop && this.vy >= -120) {
+                    this.vy = CONFIG.physics.jumpForce * 0.88;
+                    this.timer = 0;
+                }
+            }
+        }
 
         this.vy += CONFIG.physics.gravity * dt; 
         this.y += this.vy * dt;
@@ -837,6 +969,18 @@ class Projectile {
 let platforms = [], enemies = [], boxes = [], projectiles = [], decors = [], particles = [], skyClouds = [], skyBirds = [];
 let secretHourglassTaps = 0, secretHourglassLastTap = 0, secretFlashUntil = 0;
 let player = new Player();
+
+// Plataformas elevadas de poco grosor se dibujan como muros verticales.
+// El personaje y la policía chocan con toda la pared desde los lados,
+// pero pueden pasar por encima saltando. Los coches no saltan y dan la vuelta.
+function isWallPlatform(p) {
+    return p && p.type === 'ground' && p.h < 100;
+}
+function wallCollisionBox(p) {
+    return isWallPlatform(p)
+        ? { x: p.x, y: p.y, w: p.w, h: ch - p.y + 40 }
+        : p;
+}
 
 const BIOMAS = [
     { top:'#83dff0', bot:'#bff3cf', ground:'#73d58a', front:'#4aa765', mtn:'#397e69', astro:'sun', astroCol:'#ffd85a', plant:'palm' },
@@ -1134,7 +1278,7 @@ function drawBackground(ctx, b) {
             const s = c.scale;
             ctx.save();
             ctx.globalAlpha = c.alpha;
-            ctx.fillStyle='#fffaf0';
+            ctx.fillStyle='#fffdf4';
             ctx.beginPath();
             ctx.ellipse(x+34*s,y+22*s,34*s,19*s,0,0,Math.PI*2);
             ctx.ellipse(x+70*s,y+12*s,43*s,27*s,0,0,Math.PI*2);
@@ -1170,17 +1314,44 @@ function drawBackground(ctx, b) {
         });
     }
 
-    // Colinas redondeadas tipo recorte de papel
-    for(let i=0;i<12;i++){
-        const px=((i*470-cameraX*.08)%(cw+940))-470;
-        const base=ch-160+(i%3)*42, r=170+(i%4)*35;
-        ctx.fillStyle=b.mtn;
-        ctx.globalAlpha=.72;
-        ctx.beginPath(); ctx.arc(px+230,base,r,Math.PI,0); ctx.lineTo(px+460,ch); ctx.lineTo(px-20,ch); ctx.closePath(); ctx.fill();
-        ctx.globalAlpha=.18; ctx.fillStyle='#fff';
-        ctx.beginPath(); ctx.arc(px+185,base-20,r*.62,Math.PI,0); ctx.lineTo(px+350,ch); ctx.lineTo(px+50,ch); ctx.closePath(); ctx.fill();
-        ctx.globalAlpha=1;
+    // Capas de colinas con silueta natural: el terreno se siente continuo y no como una isla flotante.
+    const drawHillLayer=(horizon,height,color,alpha,speed,seed)=>{
+        ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-40,ch);
+        const step=180;
+        for(let i=-2;i<Math.ceil(cw/step)+4;i++){
+            const x=i*step-((cameraX*speed)%step);
+            const h=height*(0.72+((i+seed)%4)*0.09);
+            ctx.quadraticCurveTo(x+step*.25,horizon-h,x+step*.5,horizon-height*(0.30+((i+seed)%3)*.08));
+            ctx.quadraticCurveTo(x+step*.76,horizon-h*.68,x+step,horizon-height*(0.16+((i+seed)%4)*.06));
+        }
+        ctx.lineTo(cw+40,ch);ctx.closePath();ctx.fill();ctx.restore();
+    };
+    drawHillLayer(ch-228,130,b.mtn,.24,.035,1);
+    drawHillLayer(ch-196,112,b.mtn,.36,.055,2);
+    drawHillLayer(ch-168,94,b.mtn,.54,.085,3);
+
+    // Árboles pequeños asentados sobre las colinas para dar escala y profundidad.
+    const drawFarTree=(x,base,s,alpha)=>{
+        ctx.save();ctx.globalAlpha=alpha;
+        ctx.fillStyle='#5d6650';ctx.fillRect(x-1.8*s,base-22*s,3.6*s,22*s);
+        ctx.fillStyle='#4b9660';
+        ctx.beginPath();ctx.arc(x,base-29*s,13*s,0,Math.PI*2);ctx.arc(x-9*s,base-21*s,9*s,0,Math.PI*2);ctx.arc(x+9*s,base-21*s,9*s,0,Math.PI*2);ctx.fill();
+        ctx.restore();
+    };
+    for(let i=0;i<28;i++){
+        const base=ch-175+(i%6)*12;
+        const x=((i*127-cameraX*.075)%(cw+280))-140;
+        drawFarTree(x,base,.55+(i%4)*.1,.48);
     }
+
+    // Vegetación intermedia que une visualmente el fondo con el suelo jugable.
+    for(let i=0;i<14;i++){
+        const bx=((i*190-cameraX*.11)%(cw+400))-200;
+        const by=ch-119+(i%3)*7;
+        ctx.save();ctx.globalAlpha=.72;ctx.fillStyle='#419b62';
+        ctx.beginPath();ctx.arc(bx,by,17+(i%4)*3,0,Math.PI*2);ctx.arc(bx+16,by+3,12,0,Math.PI*2);ctx.arc(bx-15,by+5,11,0,Math.PI*2);ctx.fill();ctx.restore();
+    }
+
 }
 function drawFlag(ctx, x, y, w, h, routeName, isStart) {
     const country = String(routeName).toUpperCase();
@@ -1250,13 +1421,13 @@ function drawEnvironments(ctx,b) {
             ];
             const pal=palettes[Math.min(currentLevel-1,palettes.length-1)];
             ctx.save();
-            // terreno elevado / terraza para eliminar el efecto de casa flotando
-            // Fundación ancha + pequeña pendiente: la casa queda visualmente apoyada
-            // sobre el paisaje y no parece suspendida en el aire.
-            ctx.fillStyle='rgba(48,66,61,.28)';
-            ctx.beginPath();ctx.ellipse(hx+48,hy+112,82,13,0,0,Math.PI*2);ctx.fill();
+            // Base natural: suelo, raíces y vegetación para que las casas no parezcan flotando.
+            ctx.fillStyle='rgba(48,66,61,.35)';
+            ctx.beginPath();ctx.ellipse(hx+48,hy+115,95,16,0,0,Math.PI*2);ctx.fill();
             ctx.fillStyle=pal[3];
-            ctx.beginPath();ctx.moveTo(hx-28,hy+108);ctx.lineTo(hx+48,hy+94);ctx.lineTo(hx+124,hy+108);ctx.lineTo(hx+112,hy+119);ctx.lineTo(hx-20,hy+119);ctx.closePath();ctx.fill();
+            ctx.beginPath();ctx.moveTo(hx-45,hy+108);ctx.quadraticCurveTo(hx+48,hy+88,hx+140,hy+108);ctx.lineTo(hx+120,hy+130);ctx.lineTo(hx-35,hy+130);ctx.closePath();ctx.fill();
+            ctx.fillStyle='#4f8b58';
+            for(let t=0;t<7;t++){ctx.beginPath();ctx.arc(hx-25+t*25,hy+112+Math.sin(t)*3,12,0,Math.PI*2);ctx.fill();}
             ctx.fillStyle='#8a684f';ctx.fillRect(hx-7,hy+104,9,20);ctx.fillRect(hx+88,hy+104,9,20);
             ctx.fillStyle='rgba(255,255,255,.16)';ctx.fillRect(hx-20,hy+108,132,3);
             // cuerpo
@@ -1324,11 +1495,25 @@ function drawEnvironments(ctx,b) {
             ctx.fillStyle='#b86e4c';for(let i=20;i<p.w;i+=34)ctx.fillRect(x+i,p.y+3,6,p.h-6);
             ctx.fillStyle='#fff0c9';ctx.fillRect(x+20,p.y,18,p.h);ctx.fillRect(x+p.w-38,p.y,18,p.h);ctx.restore();
         } else {
-            const g=ctx.createLinearGradient(0,p.y,0,p.y+ch);g.addColorStop(0,b.front);g.addColorStop(.08,b.ground);g.addColorStop(1,'#3e5360');
-            ctx.fillStyle=g;ctx.fillRect(x,p.y,p.w,ch*2);
+            const g=ctx.createLinearGradient(0,p.y,0,p.y+ch);
+            g.addColorStop(0,b.front);g.addColorStop(.08,b.ground);g.addColorStop(1,'#3e5360');
+            ctx.fillStyle=g;ctx.fillRect(x,p.y,p.w, isWallPlatform(p) ? ch*2 : ch*2);
+
+            // Césped superior: en los muros queda claramente como el borde de una pared.
             ctx.fillStyle='#79d681';ctx.beginPath();ctx.roundRect(x,p.y,p.w,17,[8,8,2,2]);ctx.fill();
             ctx.fillStyle='#4ca969';
             for(let i=12;i<p.w;i+=24){ctx.beginPath();ctx.ellipse(x+i,p.y+1,7,5,0,Math.PI,0);ctx.fill();}
+
+            if (isWallPlatform(p)) {
+                // Pequeñas vetas verticales para que se lea como un muro de tierra/piedra,
+                // no como una isla flotante.
+                ctx.fillStyle='rgba(55,75,65,.13)';
+                for(let i=28;i<p.w;i+=62){
+                    ctx.fillRect(x+i,p.y+28,4,Math.min(ch-p.y-28,150));
+                }
+                ctx.fillStyle='rgba(255,255,255,.10)';
+                ctx.fillRect(x+2,p.y+18,Math.max(0,p.w-4),3);
+            }
             // Piedritas y vetas, deterministas por posición
             ctx.fillStyle='rgba(70,73,76,.22)';
             for(let i=18;i<p.w;i+=57){for(let yy=p.y+35;yy<Math.min(ch,p.y+150);yy+=38){ctx.beginPath();ctx.ellipse(x+i+(yy%17),yy,3+(i%4),2,0,0,Math.PI*2);ctx.fill();}}
@@ -1337,9 +1522,56 @@ function drawEnvironments(ctx,b) {
     });
 }
 function drawWeather(ctx) {
-    if (!weather.active) return; ctx.strokeStyle = 'rgba(173, 216, 230, 0.4)'; ctx.lineWidth = 1.5; ctx.beginPath();
-    rainDrops.forEach(r => { let drawX = r.x - cameraX; ctx.moveTo(drawX, r.y); ctx.lineTo(drawX - (weather.wind * 0.05), r.y + r.length); }); ctx.stroke();
-    if (weather.lightning > 0) { ctx.fillStyle = `rgba(255, 255, 255, ${weather.lightning * 0.7})`; ctx.fillRect(0, 0, cw, ch); }
+    if (!weather.active) return;
+
+    // Lluvia
+    ctx.strokeStyle = 'rgba(173, 216, 230, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    rainDrops.forEach(r => {
+        let drawX = r.x - cameraX;
+        ctx.moveTo(drawX, r.y);
+        ctx.lineTo(drawX - (weather.wind * 0.05), r.y + r.length);
+    });
+    ctx.stroke();
+
+    // Relámpago completo: destello + rayo ramificado
+    if (weather.lightning > 0) {
+        ctx.fillStyle = `rgba(255,255,255,${weather.lightning * 0.45})`;
+        ctx.fillRect(0, 0, cw, ch);
+
+        let x = cw * 0.65;
+        let y = 20;
+
+        ctx.save();
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = `rgba(255,255,220,${weather.lightning})`;
+        ctx.lineWidth = 5;
+        ctx.lineJoin = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - 35, y + 90);
+        ctx.lineTo(x + 5, y + 90);
+        ctx.lineTo(x - 55, y + 210);
+        ctx.lineTo(x + 30, y + 130);
+        ctx.lineTo(x - 5, y + 130);
+        ctx.lineTo(x + 55, y + 45);
+        ctx.closePath();
+        ctx.stroke();
+
+        // Ramas pequeñas
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x - 35, y + 90);
+        ctx.lineTo(x - 90, y + 120);
+        ctx.moveTo(x + 5, y + 90);
+        ctx.lineTo(x + 70, y + 110);
+        ctx.stroke();
+
+        ctx.restore();
+    }
 }
 
 function draw() {
@@ -1429,7 +1661,7 @@ function draw() {
             ctx.fillStyle = CONFIG.colors.switchBlue;
             ctx.font = `900 ${Math.min(45, cw*0.07)}px Nunito`;
             ctx.textAlign = 'center';
-            ctx.fillText('¡Frontera Cruzada!', cw/2, ch/2);
+            ctx.fillText((currentLevel >= 6) ? '¡Te mudaste de estado!' : '¡Frontera Cruzada!', cw/2, ch/2);
             ctx.textAlign = 'left';
         }
     } 
