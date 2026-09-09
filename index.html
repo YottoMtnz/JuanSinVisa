@@ -135,10 +135,30 @@
 
 <script>
 /** =========================================================================
+ * CONTROLES DE VOLUMEN (EDITAR AQUÍ PARA BALANCEAR AUDIO)
+ * ========================================================================== */
+
+// Ajusta el volumen de la música de los archivos externos (0.0 a 1.0)
+// Por ejemplo: 0.4 significa 40% de volumen. 0.0 es silencio total.
+const VOLUMEN_MUSICA = 0.2; 
+
+// Multiplicador de los efectos de sonido generados por el sistema
+// 1.0 es el nivel por defecto. Si quieres que suenen a la mitad pon 0.5. Si los quieres más altos pon 1.5.
+const VOLUMEN_EFECTOS = 1.0; 
+
+/** =========================================================================
  * CONFIGURACIÓN Y ESTADO GLOBAL
  * ========================================================================== */
 const CONFIG = {
-    physics: { gravity: 2200, jumpForce: -820, playerSpeed: 430, accel: 3800, friction: 0.80 },
+    physics: { 
+        gravity: 2200, 
+        jumpForce: -820, 
+        // VELOCIDAD EDITADA: Reducida de 430 a 250 para un caminar normal
+        playerSpeed: 250, 
+        // ACELERACIÓN EDITADA: Reducida de 3800 a 1500 para un inicio de movimiento más natural
+        accel: 1500, 
+        friction: 0.85 
+    },
     colors: { switchRed: '#ff003c', switchBlue: '#00d8d6', bgDark: '#2b2b2b' }
 };
 
@@ -159,7 +179,11 @@ const bgmTracks = {
     tema2: new Audio('tema2.mp3'),
     temafinal: new Audio('temafinal.mp3')
 };
-Object.values(bgmTracks).forEach(track => { track.loop = true; });
+Object.values(bgmTracks).forEach(track => { 
+    track.loop = true; 
+    // Aplicando el volumen de la música desde la variable de configuración
+    track.volume = VOLUMEN_MUSICA; 
+});
 let currentBGM = null;
 
 function playBGM(trackName) {
@@ -203,7 +227,7 @@ function initAudio() {
     
     // Iniciar BGM acorde al estado
     if (state === 'WIN') playBGM('temafinal');
-    else if (state === 'START' || state === 'GAMEOVER') playBGM(null);
+    else if (state === 'GAMEOVER' || state === 'STORY') playBGM(null);
     else playBGM(currentLevel <= 5 ? 'tema1' : 'tema2');
 }
 
@@ -214,12 +238,28 @@ function playSFX(type) {
     osc.connect(gain); gain.connect(audioCtx.destination);
     const now = audioCtx.currentTime;
     
+    // Aplicando el multiplicador de VOLUMEN_EFECTOS a los nodos de ganancia (gain)
     switch(type) {
-        case 'jump': osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.1); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); break;
-        case 'hit': osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.15); gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15); osc.start(now); osc.stop(now + 0.15); break;
-        case 'shoot': osc.type = 'square'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(200, now + 0.1); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1); break;
-        case 'coin': osc.type = 'sine'; osc.frequency.setValueAtTime(1000, now); osc.frequency.setValueAtTime(1500, now + 0.1); gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3); break;
-        case 'thunder': osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.exponentialRampToValueAtTime(10, now + 1.2); gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 1.2); osc.start(now); osc.stop(now + 1.2); break;
+        case 'jump': 
+            osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.1); 
+            gain.gain.setValueAtTime(0.04 * VOLUMEN_EFECTOS, now); gain.gain.exponentialRampToValueAtTime(0.01 * VOLUMEN_EFECTOS, now + 0.1); 
+            osc.start(now); osc.stop(now + 0.1); break;
+        case 'hit': 
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.15); 
+            gain.gain.setValueAtTime(0.08 * VOLUMEN_EFECTOS, now); gain.gain.exponentialRampToValueAtTime(0.01 * VOLUMEN_EFECTOS, now + 0.15); 
+            osc.start(now); osc.stop(now + 0.15); break;
+        case 'shoot': 
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(200, now + 0.1); 
+            gain.gain.setValueAtTime(0.04 * VOLUMEN_EFECTOS, now); gain.gain.exponentialRampToValueAtTime(0.01 * VOLUMEN_EFECTOS, now + 0.1); 
+            osc.start(now); osc.stop(now + 0.1); break;
+        case 'coin': 
+            osc.type = 'sine'; osc.frequency.setValueAtTime(1000, now); osc.frequency.setValueAtTime(1500, now + 0.1); 
+            gain.gain.setValueAtTime(0.04 * VOLUMEN_EFECTOS, now); gain.gain.exponentialRampToValueAtTime(0.01 * VOLUMEN_EFECTOS, now + 0.3); 
+            osc.start(now); osc.stop(now + 0.3); break;
+        case 'thunder': 
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.exponentialRampToValueAtTime(10, now + 1.2); 
+            gain.gain.setValueAtTime(0.15 * VOLUMEN_EFECTOS, now); gain.gain.exponentialRampToValueAtTime(0.01 * VOLUMEN_EFECTOS, now + 1.2); 
+            osc.start(now); osc.stop(now + 1.2); break;
     }
 }
 
@@ -227,7 +267,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d', { alpha: false });
 let cw = canvas.width = window.innerWidth; let ch = canvas.height = window.innerHeight;
 
-let state = 'START', currentLevel = 1, cameraX = 0, lastTime = 0, levelLength = 0, globalTime = 0;
+// INICIAMOS EN LA PANTALLA 'STORY' (Lore/Nintendo Text)
+let state = 'STORY', currentLevel = 1, cameraX = 0, lastTime = 0, levelLength = 0, globalTime = 0;
 let timeLeft = 100;
 window.deportStart = 0;
 window.deportDest = 1;
@@ -250,6 +291,14 @@ const keys = { left: false, right: false, up: false, attack: false };
 
 function handleGlobalInteraction() {
     initAudio(); 
+    
+    // BOTÓN DE LA PANTALLA DE HISTORIA: Llama a tema1 y va al menú START original
+    if (state === 'STORY') {
+        state = 'START';
+        playBGM('tema1'); 
+        return;
+    }
+    
     if (state === 'START' || state === 'WIN' || state === 'ARRESTADO' || state === 'GAMEOVER' || state === 'ABANDONADO' || state === 'DEPORTADO') {
         if (state === 'DEPORTADO' && globalTime - window.deportStart < 3.0) return; 
         
@@ -326,7 +375,7 @@ class Player {
         this.w = 32; this.h = 58;
         this.x = 150; this.y = ch - 400; 
         this.vx = 0; this.vy = 0; this.onGround = false;
-        this.coyoteTime = 0; // NUEVO: Tiempo permisivo para saltos
+        this.coyoteTime = 0; 
         this.hp = 100; this.maxHp = 100; this.weapon = null; 
         this.attackTimer = 0; this.facing = 1; this.invuln = 0;
         if(full) { this.coins = 0; this.lives = 3; }
@@ -335,12 +384,7 @@ class Player {
         if(this.hp <= 0) return;
         if(this.invuln > 0) this.invuln -= dt;
         
-        // Coyote time tracker
-        if(this.onGround) {
-            this.coyoteTime = 0.15; // 150ms al borde
-        } else {
-            this.coyoteTime -= dt;
-        }
+        if(this.onGround) { this.coyoteTime = 0.15; } else { this.coyoteTime -= dt; }
 
         if (keys.left) { this.vx -= CONFIG.physics.accel * dt; this.facing = -1; }
         else if (keys.right) { this.vx += CONFIG.physics.accel * dt; this.facing = 1; }
@@ -363,11 +407,10 @@ class Player {
         }
         if (!hitWall) this.x = nextX;
 
-        // NUEVO: Salto con Coyote Time
         if (keys.up && this.coyoteTime > 0) {
             this.vy = CONFIG.physics.jumpForce; 
             this.onGround = false; 
-            this.coyoteTime = 0; // Consume el salto
+            this.coyoteTime = 0; 
             playSFX('jump');
             spawnParticles(this.x + this.w/2, this.y + this.h, 6, '#fff');
         }
@@ -623,7 +666,6 @@ class ItemBox {
         let floatY = Math.sin(globalTime * 5 + this.x) * 6;
         let objY = this.y + floatY;
         
-        // Brillo de aura en lugar de sombra dura de suelo
         ctx.fillStyle = this.type === 'coin' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(230, 126, 34, 0.2)';
         ctx.beginPath(); ctx.ellipse(drawX + this.w/2, objY + this.h/2, 25, 15, 0, 0, Math.PI*2); ctx.fill();
 
@@ -764,7 +806,6 @@ function generateLevel() {
         }
     });
 
-    // MÁGICOS Y FLOTANTES: Aparecen más arriba, obligando a saltar
     for (let i = 1; i <= 3; i++) {
         let bx = 800 + (Math.random() * (levelLength - 1600));
         let plat = platforms.find(p => p.type === 'ground' && bx > p.x && bx < p.x + p.w);
@@ -781,7 +822,7 @@ function startLevel() {
     generateLevel(); 
     updateUI(); 
     state = 'PLAYING'; 
-    playBGM(currentLevel <= 5 ? 'tema1' : 'tema2'); // Gestor musical
+    playBGM(currentLevel <= 5 ? 'tema1' : 'tema2'); 
 }
 
 /** =========================================================================
@@ -887,7 +928,7 @@ function drawBackground(ctx, b) {
         for(let i=0; i<40; i++) { ctx.globalAlpha = Math.abs(Math.sin(globalTime * 3 + i)); ctx.fillRect((i*173+globalTime*2)%cw, (i*97)%(ch/2), 2, 2); }
         ctx.globalAlpha = 1.0;
         
-        ctx.shadowBlur = 20; ctx.shadowColor = b.astroCol; // Glow estilo nintendo
+        ctx.shadowBlur = 20; ctx.shadowColor = b.astroCol; 
         ctx.fillStyle = b.astroCol; ctx.beginPath(); ctx.arc(astroX, astroY, 40, 0, Math.PI*2); ctx.fill();
         ctx.shadowBlur = 0;
         ctx.fillStyle = b.top; ctx.beginPath(); ctx.arc(astroX - 12, astroY - 8, 35, 0, Math.PI*2); ctx.fill();
@@ -940,7 +981,6 @@ function drawEnvironments(ctx, b) {
             else if (d.kind === 'pine') { ctx.fillStyle = '#5c4033'; ctx.fillRect(drawX+10, d.y-25, 12, 25); ctx.fillStyle = '#145a32'; ctx.beginPath(); ctx.moveTo(drawX-15, d.y-25); ctx.lineTo(drawX+16, d.y-85); ctx.lineTo(drawX+47, d.y-25); ctx.fill(); ctx.beginPath(); ctx.moveTo(drawX-10, d.y-50); ctx.lineTo(drawX+16, d.y-105); ctx.lineTo(drawX+42, d.y-50); ctx.fill(); }
         } 
         else if (d.type.includes('flag')) {
-            // Estilo Banderín Clásico de Mario
             ctx.fillStyle = '#f1c40f'; 
             ctx.beginPath(); 
             ctx.arc(drawX + 6, d.y - 15, 12, 0, Math.PI*2); 
@@ -954,7 +994,7 @@ function drawEnvironments(ctx, b) {
             ctx.beginPath();
             ctx.moveTo(drawX + 12, d.y + 10);
             ctx.lineTo(drawX + 130, d.y + 10);
-            ctx.lineTo(drawX + 100, d.y + 42); // Hendidura en V
+            ctx.lineTo(drawX + 100, d.y + 42); 
             ctx.lineTo(drawX + 130, d.y + 75);
             ctx.lineTo(drawX + 12, d.y + 75);
             ctx.fill();
@@ -996,7 +1036,59 @@ function drawWeather(ctx) {
 function draw() {
     ctx.clearRect(0, 0, cw, ch); const b = getBiome(currentLevel);
     
-    if (state === 'START') {
+    // --- NUEVA PANTALLA DE HISTORIA (LORE TIPO NINTENDO) ---
+    if (state === 'STORY') {
+        ctx.fillStyle = '#050505'; 
+        ctx.fillRect(0, 0, cw, ch);
+        
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        let titleSize = Math.min(32, cw * 0.07);
+        ctx.font = `900 ${titleSize}px Nunito`;
+        
+        let storyText = [
+            "Esta es la historia de la odisea",
+            "que vive el cubano para lograr",
+            "alcanzar el ansiado sueño americano.",
+            "Enfrentando incontables vicisitudes",
+            "y los peligros de cada país que cruza.",
+            "E incluso, la pesada burocracia y los",
+            "problemas de administración gubernamental",
+            "que sufren estando dentro de EE.UU."
+        ];
+        
+        let lineHeight = Math.min(28, ch * 0.05);
+        let totalTextHeight = storyText.length * lineHeight;
+        let startY = ch/2 - totalTextHeight/2;
+        
+        ctx.fillText('LA TRAVESÍA DE JUAN', cw/2, startY - 40);
+        
+        ctx.font = `600 ${Math.min(18, cw * 0.045)}px Nunito`;
+        ctx.fillStyle = '#bdc3c7';
+        for (let i=0; i<storyText.length; i++) {
+            ctx.fillText(storyText[i], cw/2, startY + (i * lineHeight));
+        }
+        
+        let btnW = 180, btnH = 50;
+        let btnY = startY + totalTextHeight + 35;
+        let scale = 1 + Math.sin(globalTime * 4) * 0.05;
+        
+        ctx.save();
+        ctx.translate(cw/2, btnY + btnH/2);
+        ctx.scale(scale, scale);
+        ctx.fillStyle = CONFIG.colors.switchRed;
+        ctx.beginPath(); ctx.roundRect(-btnW/2, -btnH/2, btnW, btnH, 25); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '900 20px Nunito';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('INICIAR', 0, 0);
+        ctx.restore();
+        
+        ctx.textBaseline = 'alphabetic';
+        ctx.textAlign = 'left';
+    }
+    // --- PANTALLA ORIGINAL DE INICIO ---
+    else if (state === 'START') {
         ctx.fillStyle = CONFIG.colors.bgDark; ctx.fillRect(0, 0, cw, ch);
         let cardW = Math.min(180, cw * 0.35); let cardH = cardW * 1.3; let gap = 15;
         
