@@ -205,7 +205,7 @@
         </div>
         <div class="ui-section ui-center">
             <div class="timer-loc-stack">
-                <div><span id="ui-hourglass" class="hourglass-hit" aria-label="Reloj de arena secreto">⏳</span> <span id="ui-timer" class="highlight-gold">100</span></div>
+                <div><span id="ui-hourglass" class="hourglass-hit" aria-label="Reloj de arena secreto">⏳</span> <span id="ui-timer" class="highlight-gold">150</span></div>
                 <div id="ui-location">CUBA ➔ NICARAGUA</div>
             </div>
         </div>
@@ -233,6 +233,23 @@
     <div id="copyright-notice" aria-label="Derechos de autor">© 2026 Fraudy Martinez. Todos los derechos reservados.</div>
 
 <script>
+/** =========================================================================
+ * TIEMPO INICIAL DE CADA NIVEL
+ * ==========================================================================
+ * Cambia SOLO este número para dar más o menos tiempo al jugador.
+ * Está separado de la lógica de música para que modificarlo NO afecte
+ * la reproducción, cambio o desbloqueo de las canciones.
+ *
+ * Ejemplos:
+ *   120 = 2 minutos
+ *   150 = 2 minutos y 30 segundos
+ *   180 = 3 minutos
+ *
+ * NO cambies playBGM(), bgmTracks ni la lógica de audio para modificar
+ * el tiempo del reloj.
+ * ========================================================================== */
+const TIEMPO_INICIAL_NIVEL = 150;
+
 /** =========================================================================
  * CONTROLES DE VOLUMEN (EDITAR AQUÍ PARA BALANCEAR AUDIO)
  * ========================================================================== */
@@ -418,7 +435,7 @@ function updateCopyrightNotice() {
     copyrightNotice.style.display = (state === 'START' || state === 'STORY') ? 'block' : 'none';
 }
 
-let timeLeft = 100;
+let timeLeft = TIEMPO_INICIAL_NIVEL;
 window.deportStart = 0;
 window.deportDest = 1;
 
@@ -1153,7 +1170,7 @@ function generateLevel() {
 
 function startGame() { startLevel(); }
 function startLevel() { 
-    timeLeft = 100; 
+    timeLeft = TIEMPO_INICIAL_NIVEL; 
     generateLevel(); 
     updateUI(); 
     state = 'PLAYING'; 
