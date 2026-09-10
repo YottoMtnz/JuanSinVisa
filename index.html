@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!--
+  © 2026 Fraudy Martinez. Todos los derechos reservados.
+  Este código y el contenido original del juego pertenecen a su autor.
+-->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -28,6 +32,7 @@
         }
         
         canvas { display: block; width: 100vw; height: 100vh; }
+
         
         /* Interfaz Remasterizada y Responsiva */
         .ui-bar {
@@ -161,6 +166,34 @@
                 .timer-loc-stack { padding-left:0; }
             }
         }
+        /* Copyright: solo en la pantalla inicial; arriba y fuera de los controles móviles. */
+        #copyright-notice {
+            position: fixed;
+            left: 50%;
+            top: clamp(68px, 8vh, 92px);
+            bottom: auto;
+            transform: translateX(-50%);
+            z-index: 25;
+            display: none;
+            width: min(94vw, 560px);
+            padding: 4px 8px;
+            text-align: center;
+            font: 900 clamp(9px, 2.45vw, 13px)/1.2 Nunito, sans-serif;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,.98), 0 0 8px rgba(0,0,0,.8);
+            background: rgba(0,0,0,.28);
+            border-radius: 7px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        @media (max-width: 380px) {
+            #copyright-notice {
+                top: 68px;
+                font-size: 9px;
+                padding: 3px 6px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -197,6 +230,8 @@
 
     <canvas id="gameCanvas"></canvas>
 
+    <div id="copyright-notice" aria-label="Derechos de autor">© 2026 Fraudy Martinez. Todos los derechos reservados.</div>
+
 <script>
 /** =========================================================================
  * CONTROLES DE VOLUMEN (EDITAR AQUÍ PARA BALANCEAR AUDIO)
@@ -204,7 +239,7 @@
 
 // Ajusta el volumen de la música de los archivos externos (0.0 a 1.0)
 // Por ejemplo: 0.4 significa 40% de volumen. 0.0 es silencio total.
-const VOLUMEN_MUSICA = 0.3; 
+const VOLUMEN_MUSICA = 0.4; 
 
 // Multiplicador de los efectos de sonido generados por el sistema
 // 1.0 es el nivel por defecto. Si quieres que suenen a la mitad pon 0.5. Si los quieres más altos pon 1.5.
@@ -376,6 +411,13 @@ let cw = canvas.width = window.innerWidth; let ch = canvas.height = window.inner
 
 // INICIAMOS EN LA PANTALLA 'STORY' (Lore/Nintendo Text)
 let state = 'STORY', currentLevel = 1, cameraX = 0, lastTime = 0, levelLength = 0, globalTime = 0;
+
+// Copyright visible únicamente en la pantalla inicial (START/STORY).
+const copyrightNotice = document.getElementById('copyright-notice');
+function updateCopyrightNotice() {
+    copyrightNotice.style.display = (state === 'START' || state === 'STORY') ? 'block' : 'none';
+}
+
 let timeLeft = 100;
 window.deportStart = 0;
 window.deportDest = 1;
@@ -1774,7 +1816,7 @@ function draw() {
 function loop(timestamp) {
     if (!lastTime) lastTime = timestamp; let dt = (timestamp - lastTime) / 1000;
     if (dt > 0.1) dt = 0.1; lastTime = timestamp; globalTime += dt;
-    update(dt); draw(); requestAnimationFrame(loop);
+    update(dt); updateCopyrightNotice(); draw(); requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 </script>
