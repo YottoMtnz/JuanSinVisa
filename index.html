@@ -418,7 +418,7 @@ function updateCopyrightNotice() {
     copyrightNotice.style.display = (state === 'START' || state === 'STORY') ? 'block' : 'none';
 }
 
-let timeLeft = 150;
+let timeLeft = 100;
 window.deportStart = 0;
 window.deportDest = 1;
 
@@ -1153,7 +1153,7 @@ function generateLevel() {
 
 function startGame() { startLevel(); }
 function startLevel() { 
-    timeLeft = 150; 
+    timeLeft = 100; 
     generateLevel(); 
     updateUI(); 
     state = 'PLAYING'; 
