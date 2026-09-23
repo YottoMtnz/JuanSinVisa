@@ -1,0 +1,14 @@
+# Local publication helpers
+PUBLICAR_GITHUB*.bat
+LEEME_ANTES_DE_PUBLICAR.txt
+JuanSinVisa_GitHub_Publicacion*.zip
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.log
+.vscode/
+.idea/

@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: "Juan Sin Visa"
+message: "If you reference this project, please credit its original creator."
+type: software
+authors:
+  - family-names: "Martinez Madruga"
+    given-names: "Fraudy"
+repository-code: "https://github.com/YottoMtnz/JuanSinVisa"
+url: "https://yottomtnz.github.io/JuanSinVisa/"
+date-released: 2026-09-12
+license: "LicenseRef-All-Rights-Reserved"

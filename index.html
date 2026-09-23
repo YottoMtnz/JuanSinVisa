@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0d3353">
+  <meta name="author" content="Fraudy Martinez Madruga">
+  <meta name="copyright" content="© 2026 Fraudy Martinez Madruga. Todos los derechos reservados.">
+  <meta name="description" content="Juan Sin Visa: plataformas 2D de acción y aventura creado por Fraudy Martinez Madruga. Juega online o descarga la versión para Windows.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Juan Sin Visa">
+  <meta property="og:description" content="Una odisea de plataformas en ocho etapas desde Cuba hasta Estados Unidos. Juega online o descarga para Windows.">
+  <meta property="og:image" content="https://yottomtnz.github.io/JuanSinVisa/assets/images/juan-sin-visa.png">
+  <meta property="og:url" content="https://yottomtnz.github.io/JuanSinVisa/">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Juan Sin Visa — Sitio oficial</title>
+  <link rel="icon" href="assets/images/juan-sin-visa.png">
+  <style>
+    :root{
+      color-scheme:dark;--ink:#f8fbff;--muted:#c5d3df;--navy:#09263d;--deep:#061724;
+      --card:rgba(10,42,62,.78);--line:rgba(255,255,255,.12);--sky:#5cc8f5;--blue:#1d70b7;
+      --red:#ef465b;--gold:#ffd45e;--green:#6bd88d;--shadow:0 28px 80px rgba(0,0,0,.32);--radius:26px
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);line-height:1.55;background:
+      radial-gradient(circle at 10% 8%,rgba(92,200,245,.22),transparent 28rem),
+      radial-gradient(circle at 92% 12%,rgba(239,70,91,.16),transparent 25rem),
+      linear-gradient(180deg,#0c3554 0,#071d2e 32%,#061724 100%)}
+    a{color:inherit;text-decoration:none}img{max-width:100%;display:block}button{font:inherit}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}
+    .nav{position:sticky;top:0;z-index:30;background:rgba(5,25,39,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+    .navin{min-height:70px;display:flex;align-items:center;gap:20px}.brand{font-weight:1000;letter-spacing:.08em;margin-right:auto}.brand span{background:linear-gradient(90deg,var(--sky),#fff,var(--gold));-webkit-background-clip:text;color:transparent}
+    .navlinks{display:flex;gap:18px;font-size:.93rem;color:#dbe8f2}.navlinks a:hover{color:#fff}.lang{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:rgba(255,255,255,.05)}
+    .lang button{border:0;background:transparent;color:#b8cad8;padding:7px 10px;border-radius:999px;cursor:pointer;font-weight:800}.lang button.active{background:#fff;color:#123049}
+    .hero{min-height:calc(100vh - 70px);display:grid;grid-template-columns:1.05fr .95fr;gap:46px;align-items:center;padding:54px 0 70px}.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid rgba(255,212,94,.35);background:rgba(255,212,94,.08);border-radius:999px;color:#ffe490;font-weight:800;font-size:.88rem}.dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 18px var(--gold)}
+    h1{font-size:clamp(3.2rem,8vw,7rem);line-height:.83;margin:22px 0 18px;letter-spacing:-.06em}h1 span{display:block;background:linear-gradient(180deg,#ff6878 0,#ef465b 42%,#ffca4f 43%,#ffd866 100%);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 10px 22px rgba(0,0,0,.22))}
+    .lead{font-size:clamp(1.08rem,2vw,1.28rem);color:#d7e4ed;max-width:680px}.cta{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 18px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 19px;border-radius:14px;font-weight:900;border:1px solid var(--line);transition:.2s transform,.2s box-shadow}.btn:hover{transform:translateY(-2px)}.primary{background:linear-gradient(135deg,#ef465b,#ff754f);box-shadow:0 14px 34px rgba(239,70,91,.23)}.secondary{background:rgba(255,255,255,.08)}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:9px;color:#c9d7e2;font-size:.9rem}.hero-meta span{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
+    .hero-card{position:relative}.cover{border-radius:30px;overflow:hidden;border:1px solid rgba(255,255,255,.16);box-shadow:var(--shadow);transform:rotate(1deg)}.cover img{aspect-ratio:16/9;object-fit:cover}.float-chip{position:absolute;right:-10px;bottom:-22px;background:rgba(6,25,39,.92);border:1px solid var(--line);padding:13px 16px;border-radius:17px;box-shadow:0 18px 50px rgba(0,0,0,.35)}.float-chip span,.float-chip small{display:block}.float-chip span{font-weight:1000}.float-chip small{color:#bdccd8;margin-top:2px}
+    section{padding:72px 0}.section-head{display:flex;justify-content:space-between;gap:28px;align-items:end;margin-bottom:28px}.section-head h2{font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.04em;margin:0}.section-head p{max-width:570px;color:var(--muted);margin:0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.feature,.panel,.route-stop{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 16px 50px rgba(0,0,0,.12)}.feature{padding:24px}.feature .icon{font-size:1.8rem}.feature h3{margin:12px 0 8px}.feature p{margin:0;color:var(--muted)}
+    .route{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.route-stop{padding:17px}.route-stop span{font-size:.78rem;color:#99bbd3;font-weight:900}.route-stop b{display:block;margin-top:3px}.route-stop.us{border-color:rgba(255,212,94,.28)}
+    .media-box{overflow:hidden;border:1px solid var(--line);border-radius:28px;background:#03111b;box-shadow:var(--shadow)}.media-box video{width:100%;display:block;aspect-ratio:16/9;background:#000}
+    .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.shot{margin:0;overflow:hidden;border-radius:22px;border:1px solid var(--line);background:rgba(255,255,255,.04);cursor:zoom-in}.shot img{aspect-ratio:16/9;object-fit:cover;transition:transform .28s}.shot:hover img{transform:scale(1.025)}.shot figcaption{padding:11px 14px;color:#c7d7e2;font-size:.91rem}
+    .controls,.requirements{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{padding:24px}.panel h3{margin-top:0}.keys{display:grid;gap:10px}.keyrow{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}.keyrow:last-child{border:0}kbd{display:inline-block;padding:4px 8px;border-radius:8px;background:#f8fbff;color:#102b42;font-weight:900;box-shadow:inset 0 -2px 0 rgba(0,0,0,.16)}.panel p,.panel li{color:var(--muted)}.req ul{padding-left:20px}
+    .author{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;padding:30px;border-radius:28px;background:linear-gradient(120deg,rgba(239,70,91,.13),rgba(92,200,245,.10));border:1px solid var(--line)}.author h2{margin:0 0 8px}.author p{margin:0;color:var(--muted)}.author-badge{padding:15px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(0,0,0,.14);text-align:right}.author-badge b,.author-badge span{display:block}.author-badge span{color:#c9d7e2}
+    footer{padding:26px 0;border-top:1px solid var(--line);color:#aebfcd}.foot{display:flex;justify-content:space-between;gap:20px}.lightbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:30px}.lightbox.open{display:flex}.lightbox img{max-width:min(1400px,96vw);max-height:92vh;border-radius:18px}
+    @media(max-width:900px){.navlinks{display:none}.hero{grid-template-columns:1fr;min-height:auto;padding-top:40px}.hero-card{max-width:780px}.grid{grid-template-columns:1fr 1fr}.route{grid-template-columns:1fr 1fr}.section-head{display:block}.section-head p{margin-top:10px}.float-chip{right:8px}.author{grid-template-columns:1fr}.author-badge{text-align:left}}
+    @media(max-width:620px){.wrap{width:min(100% - 22px,1180px)}.navin{min-height:62px}.hero{padding:34px 0 48px;gap:28px}h1{font-size:clamp(3.1rem,19vw,5.7rem)}.grid,.gallery,.controls,.requirements{grid-template-columns:1fr}.route{grid-template-columns:1fr 1fr}.feature,.panel{padding:19px}section{padding:52px 0}.cta .btn{width:100%}.float-chip{position:static;margin-top:10px}.foot{display:block}.foot span{display:block;margin:3px 0}}
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Juan Sin Visa","author":{"@type":"Person","name":"Fraudy Martinez Madruga"},"url":"https://yottomtnz.github.io/JuanSinVisa/","image":"https://yottomtnz.github.io/JuanSinVisa/assets/images/juan-sin-visa.png","applicationCategory":"Game","operatingSystem":"Web browser, Windows"}</script>
+</head>
+<body>
+  <header class="nav"><div class="wrap navin">
+    <a class="brand" href="#top"><span>JUAN SIN VISA</span></a>
+    <nav class="navlinks"><a href="#features" data-i18n="navFeatures">Características</a><a href="#route" data-i18n="navRoute">Ruta</a><a href="#gallery" data-i18n="navGallery">Capturas</a><a href="#controls" data-i18n="navControls">Controles</a></nav>
+    <div class="lang"><button id="lang-es" type="button">ES</button><button id="lang-en" type="button">EN</button></div>
+  </div></header>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="eyebrow">8 etapas · Web + Windows</span></div>
+        <h1><span>JUAN<br>SIN VISA</span></h1>
+        <p class="lead" data-i18n="heroLead">Una odisea de plataformas 2D desde Cuba hasta Estados Unidos: salta, pelea, administra tus recursos y cruza ocho etapas llenas de cambios de ambiente, enemigos y situaciones inesperadas.</p>
+        <div class="cta">
+          <a class="btn primary" href="assets/JuaSV.html" data-i18n="play">🎮 Jugar online</a>
+          <a class="btn secondary" href="https://drive.google.com/file/d/1uocg8kTLYVKKQZ0HMll7iWrxIuZKakzq/view?usp=drive_link" target="_blank" rel="noopener noreferrer" data-i18n="download">⬇️ Descargar para Windows</a>
+        </div>
+        <div class="hero-meta"><span data-i18n="meta1">🗺️ 8 etapas</span><span data-i18n="meta2">💵 Dinero y compras</span><span data-i18n="meta3">📱 Controles táctiles</span><span data-i18n="meta4">🌦️ Ambiente dinámico</span></div>
+      </div>
+      <div class="hero-card"><div class="cover"><img src="assets/images/juan-sin-visa.png" alt="Juan Sin Visa cover art" width="1672" height="941"></div><div class="float-chip"><span>Juan Sin Visa</span><small data-i18n="createdBy">Creado por Fraudy Martinez Madruga</small></div></div>
+    </div>
+
+    <section id="features"><div class="wrap"><div class="section-head"><h2 data-i18n="featuresTitle">Una ruta que cambia contigo</h2><p data-i18n="featuresIntro">Cada etapa modifica el paisaje, la presión y los obstáculos, mientras Juan intenta seguir avanzando con los recursos que consigue por el camino.</p></div><div class="grid">
+      <article class="feature"><div class="icon">🧭</div><h3 data-i18n="f1t">Ocho etapas conectadas</h3><p data-i18n="f1d">El recorrido empieza en Cuba y continúa por Centroamérica, México y tres estados de EE.UU.</p></article>
+      <article class="feature"><div class="icon">🪵</div><h3 data-i18n="f2t">Plataformas y combate</h3><p data-i18n="f2d">Salta huecos y muros, evita peligros y usa armas temporales cuando las encuentres.</p></article>
+      <article class="feature"><div class="icon">💵</div><h3 data-i18n="f3t">Administra el dinero</h3><p data-i18n="f3d">Recoge efectivo durante el recorrido para comprar botiquines o un rifle temporal.</p></article>
+      <article class="feature"><div class="icon">🌦️</div><h3 data-i18n="f4t">Escenarios dinámicos</h3><p data-i18n="f4d">Cielos, lluvia, vegetación, agua y variaciones de ambiente dan identidad a la ruta.</p></article>
+      <article class="feature"><div class="icon">⏳</div><h3 data-i18n="f5t">Tiempo y vidas</h3><p data-i18n="f5d">Cada etapa tiene cuenta regresiva y el viaje exige cuidar tus vidas y tu salud.</p></article>
+      <article class="feature"><div class="icon">📱</div><h3 data-i18n="f6t">Escritorio y móvil</h3><p data-i18n="f6d">La edición web incorpora teclado en PC y controles táctiles cuando juegas desde un teléfono.</p></article>
+    </div></div></section>
+
+    <section id="route"><div class="wrap"><div class="section-head"><h2 data-i18n="routeTitle">La ruta</h2><p data-i18n="routeIntro">Ocho etapas consecutivas forman el viaje completo.</p></div><div class="route">
+      <div class="route-stop"><span>01</span><b>Cuba</b></div><div class="route-stop"><span>02</span><b>Nicaragua</b></div><div class="route-stop"><span>03</span><b>Honduras</b></div><div class="route-stop"><span>04</span><b>Guatemala</b></div>
+      <div class="route-stop"><span>05</span><b data-i18n="mexico">México</b></div><div class="route-stop us"><span>06</span><b>Texas (USA)</b></div><div class="route-stop us"><span>07</span><b>Oklahoma (USA)</b></div><div class="route-stop us"><span>08</span><b>Kansas (USA)</b></div>
+    </div></div></section>
+
+    <section id="trailer"><div class="wrap"><div class="section-head"><h2>Trailer</h2><p data-i18n="trailerIntro">Un vistazo al estilo visual, la ruta y la acción de Juan Sin Visa.</p></div><div class="media-box"><video controls preload="metadata" poster="assets/trailer/00_titulo.png"><source src="assets/trailer/Trailer_JuanSinVisa_1080p60.mp4" type="video/mp4"><span data-i18n="videoFallback">Tu navegador no puede reproducir este video.</span></video></div></div></section>
+
+    <section id="gallery"><div class="wrap"><div class="section-head"><h2 data-i18n="galleryTitle">Capturas reales</h2><p data-i18n="galleryIntro">Imágenes tomadas de la versión actual del juego.</p></div><div class="gallery">
+      <figure class="shot"><img src="assets/images/screenshots/01_historia.png" alt="Historia" loading="lazy"><figcaption data-i18n="cap1">Introducción de la historia</figcaption></figure>
+      <figure class="shot"><img src="assets/images/screenshots/02_inicio.png" alt="Inicio" loading="lazy"><figcaption data-i18n="cap2">Pantalla de inicio</figcaption></figure>
+      <figure class="shot"><img src="assets/images/screenshots/03_cuba_nicaragua.png" alt="Cuba a Nicaragua" loading="lazy"><figcaption data-i18n="cap3">Etapa 1 · Cuba → Nicaragua</figcaption></figure>
+      <figure class="shot"><img src="assets/images/screenshots/04_mexico_agua.png" alt="México" loading="lazy"><figcaption data-i18n="cap4">Etapa de México</figcaption></figure>
+      <figure class="shot"><img src="assets/images/screenshots/05_texas_usa.png" alt="Texas" loading="lazy"><figcaption data-i18n="cap5">Etapa de Texas</figcaption></figure>
+      <figure class="shot"><img src="assets/images/screenshots/06_kansas_final.png" alt="Kansas" loading="lazy"><figcaption data-i18n="cap6">Etapa final · Kansas</figcaption></figure>
+    </div></div></section>
+
+    <section id="controls"><div class="wrap"><div class="section-head"><h2 data-i18n="controlsTitle">Controles</h2><p data-i18n="controlsIntro">La versión online se adapta al escritorio o a la pantalla táctil.</p></div><div class="controls">
+      <div class="panel"><h3 data-i18n="desktop">Escritorio</h3><div class="keys">
+        <div class="keyrow"><span data-i18n="move">Moverse</span><span><kbd>←</kbd> <kbd>→</kbd> / <kbd>A</kbd> <kbd>D</kbd></span></div>
+        <div class="keyrow"><span data-i18n="jump">Saltar / continuar</span><span><kbd>↑</kbd> <kbd>W</kbd> <kbd>Espacio</kbd></span></div>
+        <div class="keyrow"><span data-i18n="attack">Atacar</span><span><kbd>Z</kbd> / <kbd>Shift</kbd></span></div>
+        <div class="keyrow"><span data-i18n="heal">Botiquín (100 $)</span><span><kbd>C</kbd></span></div>
+        <div class="keyrow"><span data-i18n="rifle">Comprar rifle (250 $)</span><span><kbd>V</kbd></span></div>
+      </div></div>
+      <div class="panel"><h3 data-i18n="mobile">Móvil / táctil</h3><p data-i18n="mobileText">Los botones de movimiento, salto, ataque, botiquín y compra aparecen directamente dentro del juego. No necesitas instalar controles adicionales para jugar online.</p></div>
+    </div></div></section>
+
+    <section><div class="wrap"><div class="section-head"><h2 data-i18n="reqTitle">Versión descargable</h2><p data-i18n="reqIntro">Requisitos orientativos de la ficha técnica suministrada para Windows.</p></div><div class="requirements">
+      <div class="panel req"><h3 data-i18n="minimum">Mínimo</h3><ul><li><strong>SO:</strong> Windows 7 SP1 / 10 / 11</li><li><strong>CPU:</strong> Intel Core i3-4130 / AMD FX-6300</li><li><strong>RAM:</strong> 4 GB</li><li><strong>GPU:</strong> Intel HD 4600 / Radeon R5 o equivalente DX11</li><li><strong data-i18n="storage">Almacenamiento:</strong> 500 MB</li><li data-i18n="minTarget">Objetivo orientativo: 1280×720 a 30 FPS.</li></ul></div>
+      <div class="panel req"><h3 data-i18n="recommended">Recomendado</h3><ul><li><strong>SO:</strong> Windows 10 / 11 64-bit</li><li><strong>CPU:</strong> Intel Core i5-6500 / Ryzen 3 1200</li><li><strong>RAM:</strong> 8 GB</li><li><strong>GPU:</strong> GTX 750 Ti / RX 550 o superior</li><li><strong data-i18n="storage2">Almacenamiento:</strong> 1 GB</li><li data-i18n="recTarget">Objetivo orientativo: 1920×1080 a 60 FPS.</li></ul></div>
+    </div></div></section>
+
+    <section><div class="wrap author"><div><h2 data-i18n="authorTitle">Creado por Fraudy Martinez Madruga</h2><p data-i18n="authorText">Juan Sin Visa es un proyecto original de plataformas 2D. Concepto, diseño y autoría acreditados a Fraudy Martinez Madruga. © 2026. Todos los derechos reservados.</p></div><div class="author-badge"><b>© 2026</b><span>Fraudy Martinez Madruga</span></div></div></section>
+  </main>
+  <footer><div class="wrap foot"><span>Juan Sin Visa</span><span data-i18n="footer">Sitio oficial · Español / English</span></div></footer>
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Screenshot"><img alt=""></div>
+
+<script>
+const T={
+ es:{navFeatures:'Características',navRoute:'Ruta',navGallery:'Capturas',navControls:'Controles',eyebrow:'8 etapas · Web + Windows',heroLead:'Una odisea de plataformas 2D desde Cuba hasta Estados Unidos: salta, pelea, administra tus recursos y cruza ocho etapas llenas de cambios de ambiente, enemigos y situaciones inesperadas.',play:'🎮 Jugar online',download:'⬇️ Descargar para Windows',meta1:'🗺️ 8 etapas',meta2:'💵 Dinero y compras',meta3:'📱 Controles táctiles',meta4:'🌦️ Ambiente dinámico',createdBy:'Creado por Fraudy Martinez Madruga',featuresTitle:'Una ruta que cambia contigo',featuresIntro:'Cada etapa modifica el paisaje, la presión y los obstáculos, mientras Juan intenta seguir avanzando con los recursos que consigue por el camino.',f1t:'Ocho etapas conectadas',f1d:'El recorrido empieza en Cuba y continúa por Centroamérica, México y tres estados de EE.UU.',f2t:'Plataformas y combate',f2d:'Salta huecos y muros, evita peligros y usa armas temporales cuando las encuentres.',f3t:'Administra el dinero',f3d:'Recoge efectivo durante el recorrido para comprar botiquines o un rifle temporal.',f4t:'Escenarios dinámicos',f4d:'Cielos, lluvia, vegetación, agua y variaciones de ambiente dan identidad a la ruta.',f5t:'Tiempo y vidas',f5d:'Cada etapa tiene cuenta regresiva y el viaje exige cuidar tus vidas y tu salud.',f6t:'Escritorio y móvil',f6d:'La edición web incorpora teclado en PC y controles táctiles cuando juegas desde un teléfono.',routeTitle:'La ruta',routeIntro:'Ocho etapas consecutivas forman el viaje completo.',mexico:'México',trailerIntro:'Un vistazo al estilo visual, la ruta y la acción de Juan Sin Visa.',videoFallback:'Tu navegador no puede reproducir este video.',galleryTitle:'Capturas reales',galleryIntro:'Imágenes tomadas de la versión actual del juego.',cap1:'Introducción de la historia',cap2:'Pantalla de inicio',cap3:'Etapa 1 · Cuba → Nicaragua',cap4:'Etapa de México',cap5:'Etapa de Texas',cap6:'Etapa final · Kansas',controlsTitle:'Controles',controlsIntro:'La versión online se adapta al escritorio o a la pantalla táctil.',desktop:'Escritorio',move:'Moverse',jump:'Saltar / continuar',attack:'Atacar',heal:'Botiquín (100 $)',rifle:'Comprar rifle (250 $)',mobile:'Móvil / táctil',mobileText:'Los botones de movimiento, salto, ataque, botiquín y compra aparecen directamente dentro del juego. No necesitas instalar controles adicionales para jugar online.',reqTitle:'Versión descargable',reqIntro:'Requisitos orientativos de la ficha técnica suministrada para Windows.',minimum:'Mínimo',recommended:'Recomendado',storage:'Almacenamiento:',storage2:'Almacenamiento:',minTarget:'Objetivo orientativo: 1280×720 a 30 FPS.',recTarget:'Objetivo orientativo: 1920×1080 a 60 FPS.',authorTitle:'Creado por Fraudy Martinez Madruga',authorText:'Juan Sin Visa es un proyecto original de plataformas 2D. Concepto, diseño y autoría acreditados a Fraudy Martinez Madruga. © 2026. Todos los derechos reservados.',footer:'Sitio oficial · Español / English'},
+ en:{navFeatures:'Features',navRoute:'Route',navGallery:'Screenshots',navControls:'Controls',eyebrow:'8 stages · Web + Windows',heroLead:'A 2D platforming odyssey from Cuba to the United States: jump, fight, manage your resources, and cross eight stages filled with changing environments, enemies, and unexpected situations.',play:'🎮 Play online',download:'⬇️ Download for Windows',meta1:'🗺️ 8 stages',meta2:'💵 Money & purchases',meta3:'📱 Touch controls',meta4:'🌦️ Dynamic atmosphere',createdBy:'Created by Fraudy Martinez Madruga',featuresTitle:'A route that changes with you',featuresIntro:'Each stage changes the scenery, pressure, and obstacles while Juan keeps moving forward with the resources he finds along the way.',f1t:'Eight connected stages',f1d:'The journey begins in Cuba and continues through Central America, Mexico, and three U.S. states.',f2t:'Platforming and combat',f2d:'Jump across gaps and walls, avoid danger, and use temporary weapons when you find them.',f3t:'Manage your money',f3d:'Collect cash during the journey to buy medkits or a temporary rifle.',f4t:'Dynamic environments',f4d:'Skies, rain, vegetation, water, and environmental variations give the route its identity.',f5t:'Time and lives',f5d:'Every stage has a countdown, and the journey requires you to protect your lives and health.',f6t:'Desktop and mobile',f6d:'The web edition supports keyboard play on desktop and built-in touch controls on phones.',routeTitle:'The route',routeIntro:'Eight consecutive stages make up the complete journey.',mexico:'Mexico',trailerIntro:'A quick look at the visual style, route, and action of Juan Sin Visa.',videoFallback:'Your browser cannot play this video.',galleryTitle:'Real screenshots',galleryIntro:'Images captured from the current build of the game.',cap1:'Story introduction',cap2:'Start screen',cap3:'Stage 1 · Cuba → Nicaragua',cap4:'Mexico stage',cap5:'Texas stage',cap6:'Final stage · Kansas',controlsTitle:'Controls',controlsIntro:'The online version adapts to desktop or touch screens.',desktop:'Desktop',move:'Move',jump:'Jump / continue',attack:'Attack',heal:'Medkit (100 $)',rifle:'Buy rifle (250 $)',mobile:'Mobile / touch',mobileText:'Movement, jump, attack, medkit, and purchase buttons appear directly inside the game. No extra controller software is required for online play.',reqTitle:'Downloadable version',reqIntro:'Suggested Windows requirements from the supplied technical sheet.',minimum:'Minimum',recommended:'Recommended',storage:'Storage:',storage2:'Storage:',minTarget:'Suggested target: 1280×720 at 30 FPS.',recTarget:'Suggested target: 1920×1080 at 60 FPS.',authorTitle:'Created by Fraudy Martinez Madruga',authorText:'Juan Sin Visa is an original 2D platforming project. Concept, design, and authorship are credited to Fraudy Martinez Madruga. © 2026. All rights reserved.',footer:'Official site · Español / English'}
+};
+function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(T[lang][k])el.textContent=T[lang][k]});document.getElementById('lang-es').classList.toggle('active',lang==='es');document.getElementById('lang-en').classList.toggle('active',lang==='en');localStorage.setItem('jsv-lang',lang)}
+document.getElementById('lang-es').onclick=()=>setLang('es');document.getElementById('lang-en').onclick=()=>setLang('en');setLang(localStorage.getItem('jsv-lang')||'es');
+const lb=document.getElementById('lightbox'),lbi=lb.querySelector('img');document.querySelectorAll('.shot img').forEach(im=>im.addEventListener('click',()=>{lbi.src=im.src;lbi.alt=im.alt;lb.classList.add('open')}));lb.addEventListener('click',()=>lb.classList.remove('open'));document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open')});
+</script>
+</body></html>
